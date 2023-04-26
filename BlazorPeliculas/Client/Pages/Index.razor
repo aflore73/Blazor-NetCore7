@@ -1,0 +1,130 @@
+﻿@page "/"
+
+@*<p>Título: <b>@WakandaForever.Titulo</b></p>
+MMM muestra el nombre dewl mes con tres caracteres
+<p>Fecha: <b>@WakandaForever.FechaLanzamiento.ToString("dd MMM yyyy")</b></p>
+*@
+<h3>Películas</h3>
+<div>
+    @if(Peliculas == null)
+    {
+        <img alt="Loading" src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif"/>
+    }
+    else if(Peliculas.Count == 0)
+    {
+        <p>No exiasten películas en la colección</p>
+    }
+    else
+    {
+        @foreach(Pelicula p in Peliculas)
+        {
+            <div>
+                <p>
+                    Título: <b style="color:cornflowerblue">@p.Titulo</b>
+                    @if (FchMov.Subtract(p.FechaLanzamiento).Days <= 14)
+                    {
+                        <span style="color:red">(¡NUEVO!)</span>
+                    }
+                </p>
+                    <p>Fecha: <b style="color:mediumslateblue">@p.FechaLanzamiento.ToString("dd MMM yyyy")</b></p>
+            </div>
+
+        }
+    }
+</div>
+<div>
+    <h3>Otras Peliculas</h3>
+    <div>
+        <p style="color:darkcyan">Sin castear Titulo con<b>(MarkupString)</b></p>
+            @if (OtrasPeliculas != null)
+            {
+                @foreach (Pelicula p in OtrasPeliculas)
+                {
+                    <div>
+                        <p>
+                            Título: @p.Titulo
+                            @if (FchMov.Subtract(p.FechaLanzamiento).Days <= 14)
+                            {
+                                <span style="color:red">(¡NUEVO!)</span>
+                            }
+                        </p>
+                        <p>Fecha: <b style="color:mediumslateblue">@p.FechaLanzamiento.ToString("dd MMM yyyy")</b></p>
+                    </div>
+
+                }
+            
+            }
+    </div>
+    <div>
+        <p style="color:darkblue">Casteo con <b>(MarkupString)</b></p>
+            @if (OtrasPeliculas != null)
+            {
+                @foreach (Pelicula p in OtrasPeliculas)
+                {
+                    <div>
+                        <p>
+                            Título: @((MarkupString)p.Titulo)
+                            @if (FchMov.Subtract(p.FechaLanzamiento).Days <= 14)
+                            {
+                                <span style="color:red">(¡NUEVO!)</span>
+                            }
+                        </p>
+                        <p>Fecha: <b style="color:mediumslateblue">@p.FechaLanzamiento.ToString("dd MMM yyyy")</b></p>
+                    </div>
+
+                }
+            
+            }
+    </div>
+</div>
+
+@code{
+    bool Init = false;
+    DateTime FchMov = new DateTime(2022, 11, 10);
+    string Nombre { get; set; } = null!;
+    Pelicula WakandaForever {get { return ObtenerPelicula(); }}
+    Pelicula ObtenerPelicula()
+    {
+        return new Pelicula
+            {
+                Titulo = "Wakanda Forever",
+                FechaLanzamiento = new DateTime(2022,11,20)
+            };
+    }
+
+    List<Pelicula>? Peliculas { get; set; }
+    List<Pelicula>? OtrasPeliculas { get; set; }
+
+    List<Pelicula> LoadList()
+    {
+        return new List<Pelicula>
+        {
+            new Pelicula { Titulo = "WakandaForever", FechaLanzamiento = new DateTime(2022, 11, 20) },
+            new Pelicula { Titulo = "Moana", FechaLanzamiento = new DateTime(2016, 11, 23) },
+            new Pelicula { Titulo = "Inception", FechaLanzamiento = new DateTime(2010, 7, 16) }
+        };
+    }
+
+    List<Pelicula> LoadOtrasPelis()
+    {
+        return new List<Pelicula>
+        {
+            new Pelicula { Titulo = "<b>WakandaForever</b>", FechaLanzamiento = new DateTime(2022, 11, 20) },
+            new Pelicula { Titulo = "<i>Moana</i>", FechaLanzamiento = new DateTime(2016, 11, 23) },
+            new Pelicula { Titulo = "Inception", FechaLanzamiento = new DateTime(2010, 7, 16) }
+        };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(3000);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        //if(firstRender)
+        //    Peliculas = LoadList();
+        Peliculas = new List<Pelicula>();
+        OtrasPeliculas = LoadOtrasPelis();
+    }
+}
